@@ -10,7 +10,7 @@ for i in "$@"; do
     echo 'file=@'"${i}"
     curl -s --location --request POST "$base_url""$remote_upload_path" \
         --header 'Content-Type: multipart/form-data' \
-        # --header '' \
+        --header 'Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjoiYWRtaW4ifQ.AE2jPLoZsdDua3I1FfxDMCRD8KefPRLc9dcVoscmS9E' \
         -F 'file=@'"${i}"
 done
 
