@@ -1,7 +1,8 @@
 import Koa from 'koa';
 import jwtAuth from "koa-jwt";
-import {config} from './config'
+import {config} from './config';
 import {routes} from './Routes';
+import cors from "@koa/cors";
 import 'module-alias/register';
 import AuthController from './controller/auth';
 const app = new Koa();
@@ -12,8 +13,9 @@ app
   .unless({path: [/^\/public/]}));
 // These routes are protected by the JWT middleware, also include middleware to respond with "Method Not Allowed - 405".
 app.use(routes.routes()).use(routes.allowedMethods());
-
+// Enable cors with default options
+app.use(cors());
 app.listen(config.port, () => {
   const token = AuthController.sign();
-  console.log('jwt-token', `Bearer ${token}`)
+  console.log('jwt-token', `Bearer ${token}`);
 });
