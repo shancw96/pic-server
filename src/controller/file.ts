@@ -1,9 +1,10 @@
-import { BaseContext, Context } from "koa";
+import { Context } from "koa";
 import path from "path";
 import fs from 'fs';
-import imagemin from 'imagemin';
-import imageminPngquant from 'imagemin-pngquant';
-import imageminJpegtran from 'imagemin-jpegtran';
+import { cpus } from 'os';
+// @ts-ignore
+import { ImagePool } from '@squoosh/lib';
+const imagePool = new ImagePool(cpus().length);
 export default class FileController {
   /**
    * 文件下载
@@ -15,16 +16,23 @@ export default class FileController {
       ctx.status = 404;
       ctx.body = "not found";
     } else {
-      const files = await imagemin([filePath], {
-        plugins: [
-          imageminJpegtran({arithmetic: true}),
-          imageminPngquant({
-            quality: [0.6, 0.8]
-          })
-        ]
-      });
-      // ctx.body = fs.createReadStream(filePath);
-      ctx.body = files[0].data;
+      const filePathTemp = path.join(__dirname, `/../../uploads/zip-${fileName}`);
+      await zipWithCache(filePathTemp);
+      ctx.body = fs.createReadStream(filePathTemp);
+    }
+
+    async function zipWithCache(tempFilePath: string) {
+      const startTime = Date.now();
+      if(!fs.existsSync(tempFilePath)) {
+        const filePathTemp = path.join(__dirname, `/../../uploads/zip-${fileName}`);
+        const image = imagePool.ingestImage(filePath);
+        await image.encode({
+          mozjpeg: {}
+        });
+        const { binary } = await image.encodedWith.mozjpeg;
+        fs.writeFileSync(`${filePathTemp}`, binary);
+        console.log('zip file cost Time: ', Date.now() - startTime + 's');
+      }
     }
   }
   /**

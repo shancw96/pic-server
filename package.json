@@ -29,6 +29,7 @@
     "@koa/cors": "^3.3.0",
     "@koa/multer": "^3.0.0",
     "@koa/router": "^10.1.1",
+    "@squoosh/lib": "^0.4.0",
     "dotenv": "^16.0.0",
     "imagemin": "^7.0.1",
     "imagemin-jpegtran": "^7.0.0",
