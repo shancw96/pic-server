@@ -1,6 +1,6 @@
 image_name=127.0.0.1:5000/koa-server:v1
 container_name=koa-pic-server
-volumn_path=/Users/wushangcheng/Project/koa-pic-base/uploads
+volumn_path=/home/shancw/data/pic-base
 npm i
 docker rm -f $container_name
 docker rmi $image_name
