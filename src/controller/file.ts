@@ -16,9 +16,14 @@ export default class FileController {
       ctx.status = 404;
       ctx.body = "not found";
     } else {
-      const filePathTemp = path.join(__dirname, `/../../uploads/zip-${fileName}`);
-      await zipWithCache(filePathTemp);
-      ctx.body = fs.createReadStream(filePathTemp);
+      
+      if (isCompressImg(fileName)) {
+        const filePathTemp = path.join(__dirname, `/../../uploads/zip-${fileName}`);
+        await zipWithCache(filePathTemp);
+        ctx.body = fs.createReadStream(filePathTemp); 
+      } else {
+        ctx.body = fs.createReadStream(filePath);
+      }
     }
 
     async function zipWithCache(tempFilePath: string) {
@@ -33,6 +38,10 @@ export default class FileController {
         fs.writeFileSync(`${filePathTemp}`, binary);
         console.log('zip file cost Time: ', Date.now() - startTime + 's');
       }
+    }
+
+    function isCompressImg(fileName: string) {
+      return /(\.jpg|\.jpeg)$/.test(fileName);
     }
   }
   /**
